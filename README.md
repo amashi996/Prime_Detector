@@ -1,11 +1,12 @@
 # Prime_Detector - Consensus Based Prime Number Deciding Distributed System
 
-### MS22036766
+### MS22036766 - G. M. A. S. Bastiansz
 
-### G. M. A. S. Bastiansz
+1. To run the application
 
-1. Bully algorithm for the master node election
-   The bully algorithm is a method for dynamically electing a coordinator or leader from a group of distributed computer processes. This algorithm applies to system where every process can send a message to every other process in the system
+## Install
+
+Run `npm install`.
 
 #### cd BullyAlgorithm
 
@@ -15,4 +16,12 @@
 
 #### To run consul
 
-##### consul agent -dev
+##### consul.exe agent -dev
+
+3. Bully-algorithm
+
+A Node/Express implementation of the [bully algorithm.](https://en.wikipedia.org/wiki/Bully_algorithm)
+
+4. Install consul
+
+Watch this youtube video to install consul to windows [click here.](https://www.youtube.com/watch?v=PSFbH2GScNg)
