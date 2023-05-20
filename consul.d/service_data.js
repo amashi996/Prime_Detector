@@ -1,65 +1,66 @@
-const Consul = require('consul');
+const Consul = require("consul");
 
 class ConsulConfig {
-    constructor() {
-        const serviceName = 'consul-serviceRegistry';
+  constructor() {
+    const serviceName = "consul-serviceRegistry";
 
-        //Initialize consumer
-        this.consul = new Consul({
-            host: '192.168.6.128',
-            port: 8500,
-            promisify: true,
-        });
+    //Initialize consumer
+    this.consul = new Consul({
+      host: "127.0.0.1",
+      port: 8500,
+      promisify: true,
+    });
 
-        //Service registration and health check configuration
-        this.consul.agent.service.register({
-            name: serviceName,
-            Address: '192.168.20.193', // Note: 192.168.20.193 is my local intranet IP, which can be viewed through ifconfig
-            port: 3000,
-            check: {
-                http: 'http://192.168.20.193:3000/health',
-                interval: '10s',
-                timeout: '5s',
-            }
-        }), function (err, result) {
-            if (err) {
-                console.error(err);
-                throw err;
-            }
-
-            Console.log(servicename + "registered successfully!");
-        }
-    }
-
-    async getConfig(key) {
-        const result = await this.consul.kv.get(key);
-
-        if (!result) {
-            return promise.reject(Key + 'does not exist');
+    //Service registration and health check configuration
+    this.consul.agent.service.register({
+      name: serviceName,
+      Address: "192.168.1.103", // Note: 192.168.1.103 is my local intranet IP, which can be viewed through ipconfig
+      port: 3000,
+      check: {
+        http: "http://192.168.1.103:3000/health",
+        interval: "10s",
+        timeout: "5s",
+      },
+    }),
+      function (err, result) {
+        if (err) {
+          console.error(err);
+          throw err;
         }
 
-        return JSON.parse(result.Value);
+        Console.log(servicename + "registered successfully!");
+      };
+  }
+
+  async getConfig(key) {
+    const result = await this.consul.kv.get(key);
+
+    if (!result) {
+      return promise.reject(Key + "does not exist");
     }
 
-    //Read user configuration simple package
-    async getUserConfig(key) {
-        const result = await this.getConfig('develop/user');
+    return JSON.parse(result.Value);
+  }
 
-        if (!key) {
-            return result;
-        }
+  //Read user configuration simple package
+  async getUserConfig(key) {
+    const result = await this.getConfig("develop/user");
 
-        return result[key];
+    if (!key) {
+      return result;
     }
 
-    //Update user configuration simple package
-    async setUserConfig(key, val) {
-        const user = await this.getConfig('develop/user');
+    return result[key];
+  }
 
-        user[key] = val;
+  //Update user configuration simple package
+  async setUserConfig(key, val) {
+    const user = await this.getConfig("develop/user");
 
-        return this.consul.kv.set('develop/user', JSON.stringify(user))
-    }
+    user[key] = val;
+
+    return this.consul.kv.set("develop/user", JSON.stringify(user));
+  }
 }
 
 module.exports = ConsulConfig;

@@ -1,3 +1,5 @@
+// handle the scheduling of work for proposers based on assigned ranges and involves reading a random number from a file and checking whether a number is prime
+
 import randomInteger from "random-int";
 import file_name from "./resources/PrimeNumbers.txt";
 

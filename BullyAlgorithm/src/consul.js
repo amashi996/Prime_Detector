@@ -1,8 +1,13 @@
+/** Service Registry - Consul */
+// facilitate interaction with the consul service registry, key-value store
+// provide methods to get & update consul configuration
+
 const Consul = require("consul");
 
 class ConsulConfig {
   constructor(serviceName) {
     console.log("Start consul");
+
     //Initialize consumer
     this.consul = new Consul({
       name: "Node 01",
@@ -33,17 +38,19 @@ class ConsulConfig {
       };
   }
 
+  // get the value associated with the provided key from consul key-value store
   async getConfig(key) {
     const result = await this.consul.kv.get(key);
 
+    // if result is false
     if (!result) {
       return promise.reject(Key + "does not exist");
     }
-
+    // if value pass
     return JSON.parse(result.Value);
   }
 
-  //Read user configuration simple package
+  // read user configuration simple package
   async getUserConfig(key) {
     const result = await this.getConfig("develop/user");
 
@@ -54,7 +61,7 @@ class ConsulConfig {
     return result[key];
   }
 
-  //Update user configuration simple package
+  // update user configuration simple package
   async setUserConfig(key, val) {
     const user = await this.getConfig("develop/user");
 

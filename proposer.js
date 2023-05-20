@@ -1,3 +1,6 @@
+// retrieve info about acceptor services from a service registry, selects a random acceptor, and constructs a URL based on the randomly selected acceptor's port.
+// returned URL can be used to communicate with the randomly selected acceptor
+
 function get_acceptors_from_service_registry() {
   acceptor_array = {};
   response = requests.get("http://127.0.0.1:8500/dc1/services");

@@ -1,14 +1,18 @@
+/** Logger file */
+
+// create logger object to logging with contexual info - process ID, key, host
 class Logger {
-    constructor(pid, node) {
-        this.pid = pid;
-        this.key = node.key;
-        this.host = node.host;
+  // set properties
+  constructor(pid, node) {
+    this.pid = pid;
+    this.key = node.key;
+    this.host = node.host;
+  }
 
-    }
-
-    log(message) {
-        console.log(`(${this.pid}) ${this.host.href} -- ${message}`);
-    }
+  // for logging messages
+  log(message) {
+    console.log(`(${this.pid}) ${this.host.href} -- ${message}`);
+  }
 }
 
 module.exports = Logger;

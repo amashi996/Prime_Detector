@@ -1,27 +1,31 @@
+/** Bully Algorithm */
+
 const express = require("express");
 const axios = require("axios");
 const Logger = require("./logger");
 const ConsulConfig = require("./consul");
 const crypto = require("crypto");
 
-let coordinatorNode = null;
-let isAwaitingNewCoordinator = false;
+let coordinatorNode = null; //hold the information of the current coordinator node
+let isAwaitingNewCoordinator = false; //a flag to track if the system is waiting for a new coordinator to be elected
 
+// Setting up the Application
 (async () => {
   const app = express();
   const nodes = getNodes(process.argv);
-  const thisNode = nodes[0];
+  const thisNode = nodes[0]; // select as the current node
 
-  const logger = new Logger(process.pid, thisNode);
+  const logger = new Logger(process.pid, thisNode); // pass the process ID and the current node information
 
-  registerNodeEndpoints(app, nodes, logger);
+  registerNodeEndpoints(app, nodes, logger); //(define at bottom)
   setInterval(() => pingCoordinator(nodes, logger), 5000);
 
   app.listen(thisNode.host.port, () => logger.log("Node up and listening"));
   startElection(nodes, logger);
 })();
 
-//Get the Node, Node ID
+// Get the Node, Node ID
+// extract node information from the command line
 function getNodes(args) {
   let nodes = args.slice(2).map((x) => {
     let tokens = x.split(":");
@@ -34,14 +38,14 @@ function getNodes(args) {
   return nodes;
 }
 
-//APIs to check,start and select the leader.
+// APIs to check,start and select the leader.
+// set up the API endpoints for checking the status of candidates, starting an election, and selecting the winner
 function registerNodeEndpoints(app, nodes, logger) {
-  // const id = 0;
-
   const nodeID = new Date().getUTCMilliseconds() + crypto.randomInt(10);
   const consul = new ConsulConfig("Paxos " + nodeID + "");
 
-  //Checking the status of candidates
+  // checking the status of candidates
+  // indicate that the node is alive
   app.get("/alive", (req, res) => res.sendStatus(200));
 
   //Start election
@@ -59,14 +63,14 @@ function registerNodeEndpoints(app, nodes, logger) {
   });
 }
 
-//Ping and check the coordinator status
+//Ping and check the status of the coordinator node by making an HTTP GET request to the /alive endpoint of the coordinator nod
 async function pingCoordinator(nodes, logger) {
   try {
     let url = new URL("/alive", coordinatorNode.host);
-    await axios.get(url.href); //if available continue
+    await axios.get(url.href); //if available continue - logs a message indicating that the coordinator is up
     logger.log(`Coordinator ${coordinatorNode.host.href} is up`);
   } catch (error) {
-    logger.log(`Coordinator ${coordinatorNode.host.href} is down!`); //if not re-elect
+    logger.log(`Coordinator ${coordinatorNode.host.href} is down!`); //if not re-elect - logs a message indicating that the coordinator is down and initiate a new election process
     startElection(nodes, logger);
   }
 }
